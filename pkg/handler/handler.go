@@ -21,7 +21,7 @@ func (h *Handler) InitRoutes(e *echo.Echo) {
 			advertisement.POST("/", h.createAdvertisement)
 			advertisement.GET("/", h.getAllAdvertisement)
 			advertisement.GET("/:id", h.getAdvertisementById)
-			//advertisement.PUT("/:id", h.updateAdvertisement)
+			advertisement.PUT("/:id", h.updateAdvertisement)
 			//advertisement.DELETE("/:id", h.deleteAdvertisement)
 
 			img := advertisement.Group("/:id/image")

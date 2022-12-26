@@ -58,3 +58,7 @@ func (h *Handler) getAdvertisementById(c echo.Context) error {
 	c.JSON(http.StatusOK, advDTO)
 	return nil
 }
+
+func (h *Handler) updateAdvertisement(c echo.Context) error {
+	return nil
+}
