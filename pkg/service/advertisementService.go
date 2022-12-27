@@ -26,3 +26,10 @@ func (s *AdvertisementService) GetAllAdvertisement() ([]advertisement.Advertisem
 func (s *AdvertisementService) GetAdvertisementById(id int) (advertisement.AdvertisementDTO, error) {
 	return s.repo.GetAdvertisementById(id)
 }
+
+func (s *AdvertisementService) UpdateAdvertisement(id int, dto advertisement.UpdateAdvertisement) error {
+	if err := dto.Validate(); err != nil {
+		return err
+	}
+	return s.repo.UpdateAdvertisement(id, dto)
+}

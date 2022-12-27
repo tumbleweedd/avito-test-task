@@ -9,6 +9,7 @@ type Advertisement interface {
 	GetAllAdvertisement() ([]advertisement.Advertisement, error)
 	CreateAdvertisement(input advertisement.Advertisement) (int, error)
 	GetAdvertisementById(id int) (advertisement.AdvertisementDTO, error)
+	UpdateAdvertisement(id int, dto advertisement.UpdateAdvertisement) error
 }
 
 type Image interface {

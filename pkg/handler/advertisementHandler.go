@@ -60,5 +60,24 @@ func (h *Handler) getAdvertisementById(c echo.Context) error {
 }
 
 func (h *Handler) updateAdvertisement(c echo.Context) error {
+	advId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	var updatedAdv advertisement.UpdateAdvertisement
+
+	if err := c.Bind(&updatedAdv); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	if err := h.service.UpdateAdvertisement(advId, updatedAdv); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "ok",
+	})
+
 	return nil
 }

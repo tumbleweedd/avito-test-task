@@ -23,7 +23,7 @@ func (r *AdvertisementPostgres) CreateAdvertisement(input advertisement.Advertis
 	}
 
 	var advertisementId int
-	createAdvertisementQuery := fmt.Sprintf("insert into %s (title, description) values($1, $2) returning id", advertisementTable)
+	createAdvertisementQuery := fmt.Sprint("insert into advertisement (title, description) values($1, $2) returning id")
 
 	rowA := tx.QueryRow(createAdvertisementQuery, input.Title, input.Description)
 	err = rowA.Scan(&advertisementId)
@@ -33,7 +33,7 @@ func (r *AdvertisementPostgres) CreateAdvertisement(input advertisement.Advertis
 	}
 
 	var imgId int
-	createImgQuery := fmt.Sprintf("insert into %s (img) values($1) returning id", imgTable)
+	createImgQuery := fmt.Sprint("insert into img (img) values($1) returning id")
 
 	rowA = tx.QueryRow(createImgQuery, input.Img)
 	err = rowA.Scan(&imgId)
@@ -42,7 +42,7 @@ func (r *AdvertisementPostgres) CreateAdvertisement(input advertisement.Advertis
 		return 0, err
 	}
 
-	createAdvertisementImgQuery := fmt.Sprintf("insert into %s (advertisement_id, img_id) values ($1,$2)", advertisementImgTable)
+	createAdvertisementImgQuery := fmt.Sprint("insert into advertisement_img (advertisement_id, img_id) values ($1,$2)")
 	_, err = tx.Exec(createAdvertisementImgQuery, advertisementId, imgId)
 	if err != nil {
 		tx.Rollback()
@@ -55,17 +55,17 @@ func (r *AdvertisementPostgres) CreateAdvertisement(input advertisement.Advertis
 func (r *AdvertisementPostgres) GetAllAdvertisement() ([]advertisement.Advertisement, error) {
 	var advertisements []advertisement.Advertisement
 
-	query := fmt.Sprintf(`
+	query := fmt.Sprint(`
 								SELECT a.id,
 									   a.description,
 									   a.title,
 									   i.img
-									FROM %s a
-									join %s ai on a.id = ai.advertisement_id
-									join %s i on i.id = ai.img_id
+									FROM advertisement a
+									join advertisement_img ai on a.id = ai.advertisement_id
+									join img i on i.id = ai.img_id
 									ORDER  BY i.id, a.id
 									limit (select count(*) from advertisement)
-									`, advertisementTable, advertisementImgTable, imgTable)
+									`)
 	if err := r.db.Select(&advertisements, query); err != nil {
 		return nil, err
 	}
@@ -76,20 +76,48 @@ func (r *AdvertisementPostgres) GetAllAdvertisement() ([]advertisement.Advertise
 func (r *AdvertisementPostgres) GetAdvertisementById(id int) (advertisement.AdvertisementDTO, error) {
 	var advertisement advertisement.AdvertisementDTO
 
-	query := fmt.Sprintf(`
+	query := fmt.Sprint(`
 								SELECT a.description,
 									   a.title,
 									   i.img
-									FROM %s a
-									join %s ai on a.id = ai.advertisement_id
-									join %s i on i.id = ai.img_id
+									FROM advertisement a
+									join advertisement_img ai on a.id = ai.advertisement_id
+									join img i on i.id = ai.img_id
 									where a.id = $1
 									ORDER  BY i.id, a.id
 									limit (select count(*) from advertisement)
-									`, advertisementTable, advertisementImgTable, imgTable)
+									`)
 
 	err := r.db.Get(&advertisement, query, id)
 
 	return advertisement, err
+
+}
+
+func (r *AdvertisementPostgres) UpdateAdvertisement(id int, dto advertisement.UpdateAdvertisement) error {
+	queryAdv := fmt.Sprint(`
+						update advertisement
+						set description = $1,
+							title       = $2
+						where id = $3
+						`)
+
+	queryImg := fmt.Sprint(`
+						update img
+						set img = $1
+						where img.id = (SELECT i.id
+										FROM advertisement a
+												 join advertisement_img ai on a.id = ai.advertisement_id
+												 join img i on i.id = ai.img_id
+										where a.id = $2
+										ORDER BY i.id, a.id
+										limit 1)
+						`)
+
+	_, err := r.db.Exec(queryAdv, dto.Description, dto.Title, id)
+
+	_, err = r.db.Exec(queryImg, dto.Img, id)
+
+	return err
 
 }
