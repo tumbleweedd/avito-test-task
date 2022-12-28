@@ -92,5 +92,8 @@ func (h *Handler) deleteAdvertisement(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "the deletion was successful",
+	})
 	return nil
 }

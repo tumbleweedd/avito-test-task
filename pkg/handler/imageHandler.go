@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func (h *Handler) addImage(c echo.Context) error {
+func (h *Handler) addImageToAdvertisement(c echo.Context) error {
 	advertisementId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		echo.NewHTTPError(http.StatusBadRequest, "invalid param")
@@ -32,4 +32,29 @@ func (h *Handler) addImage(c echo.Context) error {
 	})
 
 	return nil
+}
+
+type ResponseImagesSet struct {
+	Data []string
+}
+
+func (h *Handler) getImagesByAdvertisementId(c echo.Context) error {
+	advId, err := strconv.Atoi(c.Param("id"))
+	var resultImageSet []string
+
+	if err != nil {
+		echo.NewHTTPError(http.StatusBadRequest, "invalid param")
+	}
+
+	resultImageSet, err = h.service.Image.GetAllImagesByAdvId(advId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	c.JSON(http.StatusOK, ResponseImagesSet{
+		Data: resultImageSet,
+	})
+
+	return nil
+
 }
