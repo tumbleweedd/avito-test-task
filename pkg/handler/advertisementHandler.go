@@ -81,3 +81,16 @@ func (h *Handler) updateAdvertisement(c echo.Context) error {
 
 	return nil
 }
+
+func (h *Handler) deleteAdvertisement(c echo.Context) error {
+	advId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	if err := h.service.DeleteAdvertisement(advId); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return nil
+}

@@ -9,6 +9,10 @@ type AdvertisementService struct {
 	repo repository.Advertisement
 }
 
+func (s *AdvertisementService) DeleteAdvertisement(id int) error {
+	return s.repo.DeleteAdvertisement(id)
+}
+
 func NewAdvertisementService(repo repository.Advertisement) *AdvertisementService {
 	return &AdvertisementService{
 		repo: repo,

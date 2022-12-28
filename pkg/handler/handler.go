@@ -22,7 +22,7 @@ func (h *Handler) InitRoutes(e *echo.Echo) {
 			advertisement.GET("/", h.getAllAdvertisement)
 			advertisement.GET("/:id", h.getAdvertisementById)
 			advertisement.PUT("/:id", h.updateAdvertisement)
-			//advertisement.DELETE("/:id", h.deleteAdvertisement)
+			advertisement.DELETE("/:id", h.deleteAdvertisement)
 
 			img := advertisement.Group("/:id/image")
 			{

@@ -10,6 +10,39 @@ type AdvertisementPostgres struct {
 	db *sqlx.DB
 }
 
+func (r *AdvertisementPostgres) DeleteAdvertisement(id int) error {
+	tx, err := r.db.Begin()
+	if err != nil {
+		return err
+	}
+	queryForAdv := fmt.Sprint(`
+									delete from advertisement a 
+       								where a.id = $1
+       								`)
+
+	queryForImg := fmt.Sprint(`
+									delete
+									from img
+									where img.id in (select ai.img_id
+													 from advertisement_img ai
+													 where ai.img_id in (select ai2.img_id from advertisement_img ai2 where ai2.advertisement_id = $1));
+									`)
+
+	_, err = tx.Exec(queryForImg, id)
+	if err != nil {
+		return err
+		tx.Rollback()
+	}
+
+	_, err = tx.Exec(queryForAdv, id)
+	if err != nil {
+		return err
+		tx.Rollback()
+	}
+
+	return tx.Commit()
+}
+
 func NewAdvertisementPostgres(db *sqlx.DB) *AdvertisementPostgres {
 	return &AdvertisementPostgres{
 		db: db,
@@ -63,7 +96,7 @@ func (r *AdvertisementPostgres) GetAllAdvertisement() ([]advertisement.Advertise
 									FROM advertisement a
 									join advertisement_img ai on a.id = ai.advertisement_id
 									join img i on i.id = ai.img_id
-									ORDER  BY i.id, a.id
+									ORDER  BY a.id desc
 									limit (select count(*) from advertisement)
 									`)
 	if err := r.db.Select(&advertisements, query); err != nil {
