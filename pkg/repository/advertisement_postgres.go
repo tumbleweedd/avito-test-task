@@ -139,12 +139,12 @@ func (r *AdvertisementPostgres) UpdateAdvertisement(id int, dto advertisement.Up
 						update img
 						set img = $1
 						where img.id = (SELECT i.id
-										FROM advertisement a
-												 join advertisement_img ai on a.id = ai.advertisement_id
-												 join img i on i.id = ai.img_id
-										where a.id = $2
-										ORDER BY i.id, a.id
-										limit 1)
+											FROM advertisement a
+											join advertisement_img ai on a.id = ai.advertisement_id
+											join img i on i.id = ai.img_id
+											where a.id = $2
+											ORDER BY i.id, a.id
+											limit 1)
 						`)
 
 	_, err := r.db.Exec(queryAdv, dto.Description, dto.Title, id)

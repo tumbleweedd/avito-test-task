@@ -28,7 +28,7 @@ func (h *Handler) InitRoutes(e *echo.Echo) {
 			{
 				img.POST("/", h.addImageToAdvertisement)
 				img.GET("/", h.getImagesByAdvertisementId)
-				//img.GET("/:id", h.getImageById)
+				img.GET("/:imgId", h.getImageById)
 				//img.PUT("/:id", h.updateImage)
 				//img.DELETE("/:id", h.deleteImage)
 			}

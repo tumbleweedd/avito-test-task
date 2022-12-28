@@ -97,3 +97,4 @@ func (h *Handler) deleteAdvertisement(c echo.Context) error {
 	})
 	return nil
 }
+

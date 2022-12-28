@@ -39,3 +39,7 @@ func (ua *UpdateAdvertisement) Validate() error {
 	}
 	return nil
 }
+
+type ImageResponse struct {
+	Image string
+}

@@ -2,10 +2,11 @@ package handler
 
 import (
 	"fmt"
-	"github.com/labstack/echo/v4"
-	advertisement "github.com/tumbleweedd/avito-test-task"
 	"net/http"
 	"strconv"
+
+	"github.com/labstack/echo/v4"
+	advertisement "github.com/tumbleweedd/avito-test-task"
 )
 
 func (h *Handler) addImageToAdvertisement(c echo.Context) error {
@@ -56,5 +57,29 @@ func (h *Handler) getImagesByAdvertisementId(c echo.Context) error {
 	})
 
 	return nil
+}
 
+func (h *Handler) getImageById(c echo.Context) error {
+	var response advertisement.ImageResponse
+
+	advId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid param")
+	}
+
+	imgId, err := strconv.Atoi(c.Param("imgId"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid param")
+	}
+
+	response, err = h.service.Image.GetImageById(advId, imgId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	c.JSON(http.StatusOK, advertisement.ImageResponse{
+		Image: response.Image,
+	})
+
+	return nil
 }

@@ -2,7 +2,9 @@ package repository
 
 import (
 	"fmt"
+
 	"github.com/jmoiron/sqlx"
+	advertisement "github.com/tumbleweedd/avito-test-task"
 )
 
 type ImagePostgres struct {
@@ -20,7 +22,7 @@ func (r *ImagePostgres) AddImage(advertisementId int, image string) (int, error)
 	}
 
 	var imageId int
-	addImageQuery := fmt.Sprintf("insert into %s (img) values ($1) returning id", imgTable)
+	addImageQuery := fmt.Sprintf("insert into img (img) values ($1) returning id")
 
 	row := tx.QueryRow(addImageQuery, image)
 	err = row.Scan(&imageId)
@@ -29,7 +31,7 @@ func (r *ImagePostgres) AddImage(advertisementId int, image string) (int, error)
 		return 0, err
 	}
 
-	createAdvertisementImageQuery := fmt.Sprintf("insert into %s (advertisement_id, img_id) values ($1, $2)", advertisementImgTable)
+	createAdvertisementImageQuery := fmt.Sprintf("insert into advertisement_img (advertisement_id, img_id) values ($1, $2)")
 	_, err = tx.Exec(createAdvertisementImageQuery, advertisementId, imageId)
 	if err != nil {
 		tx.Rollback()
@@ -56,4 +58,18 @@ func (r *ImagePostgres) GetAllImagesByAdvId(advId int) ([]string, error) {
 
 	return result, nil
 
+}
+
+func (r *ImagePostgres) GetImageById(advId, imageId int) (advertisement.ImageResponse, error) {
+	var image advertisement.ImageResponse
+	query := fmt.Sprintf(`
+						SELECT i.img
+							FROM %s i
+							JOIN %s ai on ai.img_id = i.id
+							where ai.advertisement_id = $1 and ai.img_id = $2
+						`, imgTable, advertisementImgTable)
+
+	err := r.db.Get(&image.Image, query, advId, imageId)
+
+	return image, err
 }
