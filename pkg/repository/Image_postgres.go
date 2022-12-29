@@ -73,3 +73,21 @@ func (r *ImagePostgres) GetImageById(advId, imageId int) (advertisement.ImageRes
 
 	return image, err
 }
+
+func (r *ImagePostgres) DeleteImage(advId, imageId int) error {
+	query := fmt.Sprintf(`delete
+							FROM img i
+							WHERE i.id in (
+								SELECT ai.img_id
+									FROM advertisement_img ai
+									WHERE ai.advertisement_id = $1 and ai.img_id = $2
+							);
+						`)
+
+	_, err := r.db.Exec(query, advId, imageId)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -17,6 +17,7 @@ type Image interface {
 	AddImage(advertisementId int, image string) (int, error)
 	GetAllImagesByAdvId(advId int) ([]string, error)
 	GetImageById(advId, imageId int) (advertisement.ImageResponse, error)
+	DeleteImage(advId, imageId int) error
 }
 
 type Service struct {

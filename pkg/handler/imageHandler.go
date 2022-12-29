@@ -83,3 +83,26 @@ func (h *Handler) getImageById(c echo.Context) error {
 
 	return nil
 }
+
+func (h *Handler) deleteImage(c echo.Context) error {
+	advId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid advertisement param")
+	}
+
+	imageId, err := strconv.Atoi(c.Param("imgId"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid image param")
+	}
+
+	err = h.service.Image.DeleteImage(advId, imageId)
+	if err!= nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "the deletion was successful",
+	})
+
+	return nil
+}
