@@ -5,7 +5,6 @@ import (
 	advertisement "github.com/tumbleweedd/avito-test-task/model"
 	"net/http"
 	"strconv"
-
 	"github.com/labstack/echo/v4"
 )
 

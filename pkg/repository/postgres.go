@@ -9,6 +9,7 @@ const (
 	advertisementTable    = "advertisement"
 	imgTable              = "img"
 	advertisementImgTable = "advertisement_img"
+	getAllAdvertisementView = "getAllAdvView"
 )
 
 type Config struct {

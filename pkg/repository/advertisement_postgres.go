@@ -10,6 +10,12 @@ type AdvertisementPostgres struct {
 	db *sqlx.DB
 }
 
+func NewAdvertisementPostgres(db *sqlx.DB) *AdvertisementPostgres {
+	return &AdvertisementPostgres{
+		db: db,
+	}
+}
+
 func (r *AdvertisementPostgres) DeleteAdvertisement(id int) error {
 	tx, err := r.db.Begin()
 	if err != nil {
@@ -43,12 +49,6 @@ func (r *AdvertisementPostgres) DeleteAdvertisement(id int) error {
 	return tx.Commit()
 }
 
-func NewAdvertisementPostgres(db *sqlx.DB) *AdvertisementPostgres {
-	return &AdvertisementPostgres{
-		db: db,
-	}
-}
-
 func (r *AdvertisementPostgres) CreateAdvertisement(input model.Advertisement) (int, error) {
 	tx, err := r.db.Begin()
 	if err != nil {
@@ -56,7 +56,8 @@ func (r *AdvertisementPostgres) CreateAdvertisement(input model.Advertisement) (
 	}
 
 	var advertisementId int
-	createAdvertisementQuery := fmt.Sprint("insert into advertisement (title, description) values($1, $2) returning id")
+	createAdvertisementQuery := fmt.Sprint(`insert into advertisement (title, description, date_creation) 
+											values($1, $2, current_timestamp) returning id`)
 
 	rowA := tx.QueryRow(createAdvertisementQuery, input.Title, input.Description)
 	err = rowA.Scan(&advertisementId)
@@ -85,20 +86,13 @@ func (r *AdvertisementPostgres) CreateAdvertisement(input model.Advertisement) (
 	return advertisementId, tx.Commit()
 }
 
-func (r *AdvertisementPostgres) GetAllAdvertisement() ([]model.Advertisement, error) {
+func (r *AdvertisementPostgres) GetAllAdvertisement(sortParam string) ([]model.Advertisement, error) {
 	var advertisements []model.Advertisement
 
-	query := fmt.Sprint(`
-								SELECT a.id,
-									   a.description,
-									   a.title,
-									   i.img
-									FROM advertisement a
-									join advertisement_img ai on a.id = ai.advertisement_id
-									join img i on i.id = ai.img_id
-									ORDER  BY a.id desc
-									limit (select count(*) from advertisement)
-									`)
+	query := fmt.Sprintf(`
+						select * from %s as v
+						order by v.date_creation %s;
+						`, getAllAdvertisementView, sortParam)
 	if err := r.db.Select(&advertisements, query); err != nil {
 		return nil, err
 	}

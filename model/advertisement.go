@@ -2,15 +2,17 @@ package model
 
 import (
 	"errors"
+	"time"
 
 	validation "github.com/go-ozzo/ozzo-validation"
 )
 
 type Advertisement struct {
-	Id          int    `json:"id" db:"id"`
-	Title       string `json:"title" db:"title"`
-	Description string `json:"description" db:"description"`
-	Img         string `json:"img"`
+	Id          int       `json:"id" db:"id"`
+	Title       string    `json:"title" db:"title"`
+	Description string    `json:"description" db:"description"`
+	Img         string    `json:"img"`
+	DateTime    time.Time `json:"date_time" db:"date_creation"`
 }
 
 func (adv *Advertisement) Validate() error {

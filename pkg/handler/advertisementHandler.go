@@ -1,10 +1,12 @@
 package handler
 
 import (
-	"github.com/labstack/echo/v4"
-	advertisement "github.com/tumbleweedd/avito-test-task/model"
 	"net/http"
 	"strconv"
+	"strings"
+
+	"github.com/labstack/echo/v4"
+	advertisement "github.com/tumbleweedd/avito-test-task/model"
 )
 
 func (h *Handler) createAdvertisement(c echo.Context) error {
@@ -36,7 +38,7 @@ type getAllAdvertisementResponse struct {
 }
 
 func (h *Handler) getAllAdvertisement(c echo.Context) error {
-	adv, err := h.service.Advertisement.GetAllAdvertisement()
+	adv, err := h.service.Advertisement.GetAllAdvertisement(getSortValue(c))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
@@ -98,4 +100,18 @@ func (h *Handler) deleteAdvertisement(c echo.Context) error {
 		"status": "the deletion was successful",
 	})
 	return nil
+}
+
+func getSortValue(c echo.Context) string {
+	var sortBy string
+
+	val := c.Request().Header.Get("sort-by")
+
+	if strings.EqualFold(val, "desc") {
+		sortBy = "desc"
+	} else if val == "" {
+		sortBy = ""
+	}
+
+	return sortBy
 }
