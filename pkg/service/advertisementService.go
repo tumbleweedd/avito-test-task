@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/tumbleweedd/avito-test-task"
+	"github.com/tumbleweedd/avito-test-task/model"
 	"github.com/tumbleweedd/avito-test-task/pkg/repository"
 )
 
@@ -19,19 +19,19 @@ func NewAdvertisementService(repo repository.Advertisement) *AdvertisementServic
 	}
 }
 
-func (s *AdvertisementService) CreateAdvertisement(input advertisement.Advertisement) (int, error) {
+func (s *AdvertisementService) CreateAdvertisement(input model.Advertisement) (int, error) {
 	return s.repo.CreateAdvertisement(input)
 }
 
-func (s *AdvertisementService) GetAllAdvertisement() ([]advertisement.Advertisement, error) {
+func (s *AdvertisementService) GetAllAdvertisement() ([]model.Advertisement, error) {
 	return s.repo.GetAllAdvertisement()
 }
 
-func (s *AdvertisementService) GetAdvertisementById(id int) (advertisement.AdvertisementDTO, error) {
+func (s *AdvertisementService) GetAdvertisementById(id int) (model.AdvertisementDTO, error) {
 	return s.repo.GetAdvertisementById(id)
 }
 
-func (s *AdvertisementService) UpdateAdvertisement(id int, dto advertisement.UpdateAdvertisement) error {
+func (s *AdvertisementService) UpdateAdvertisement(id int, dto model.UpdateAdvertisement) error {
 	if err := dto.Validate(); err != nil {
 		return err
 	}

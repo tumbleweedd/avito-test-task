@@ -3,7 +3,7 @@ package repository
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
-	"github.com/tumbleweedd/avito-test-task"
+	"github.com/tumbleweedd/avito-test-task/model"
 )
 
 type AdvertisementPostgres struct {
@@ -30,14 +30,14 @@ func (r *AdvertisementPostgres) DeleteAdvertisement(id int) error {
 
 	_, err = tx.Exec(queryForImg, id)
 	if err != nil {
-		return err
 		tx.Rollback()
+		return err
 	}
 
 	_, err = tx.Exec(queryForAdv, id)
 	if err != nil {
-		return err
 		tx.Rollback()
+		return err
 	}
 
 	return tx.Commit()
@@ -49,7 +49,7 @@ func NewAdvertisementPostgres(db *sqlx.DB) *AdvertisementPostgres {
 	}
 }
 
-func (r *AdvertisementPostgres) CreateAdvertisement(input advertisement.Advertisement) (int, error) {
+func (r *AdvertisementPostgres) CreateAdvertisement(input model.Advertisement) (int, error) {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return 0, err
@@ -85,8 +85,8 @@ func (r *AdvertisementPostgres) CreateAdvertisement(input advertisement.Advertis
 	return advertisementId, tx.Commit()
 }
 
-func (r *AdvertisementPostgres) GetAllAdvertisement() ([]advertisement.Advertisement, error) {
-	var advertisements []advertisement.Advertisement
+func (r *AdvertisementPostgres) GetAllAdvertisement() ([]model.Advertisement, error) {
+	var advertisements []model.Advertisement
 
 	query := fmt.Sprint(`
 								SELECT a.id,
@@ -106,8 +106,8 @@ func (r *AdvertisementPostgres) GetAllAdvertisement() ([]advertisement.Advertise
 	return advertisements, nil
 }
 
-func (r *AdvertisementPostgres) GetAdvertisementById(id int) (advertisement.AdvertisementDTO, error) {
-	var advertisement advertisement.AdvertisementDTO
+func (r *AdvertisementPostgres) GetAdvertisementById(id int) (model.AdvertisementDTO, error) {
+	var advertisement model.AdvertisementDTO
 
 	query := fmt.Sprint(`
 								SELECT a.description,
@@ -127,7 +127,7 @@ func (r *AdvertisementPostgres) GetAdvertisementById(id int) (advertisement.Adve
 
 }
 
-func (r *AdvertisementPostgres) UpdateAdvertisement(id int, dto advertisement.UpdateAdvertisement) error {
+func (r *AdvertisementPostgres) UpdateAdvertisement(id int, dto model.UpdateAdvertisement) error {
 	queryAdv := fmt.Sprint(`
 						update advertisement
 						set description = $1,

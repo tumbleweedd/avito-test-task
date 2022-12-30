@@ -2,11 +2,11 @@ package handler
 
 import (
 	"fmt"
+	advertisement "github.com/tumbleweedd/avito-test-task/model"
 	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
-	advertisement "github.com/tumbleweedd/avito-test-task"
 )
 
 func (h *Handler) addImageToAdvertisement(c echo.Context) error {
@@ -96,7 +96,7 @@ func (h *Handler) deleteImage(c echo.Context) error {
 	}
 
 	err = h.service.Image.DeleteImage(advId, imageId)
-	if err!= nil {
+	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 

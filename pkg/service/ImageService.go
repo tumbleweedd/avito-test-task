@@ -1,7 +1,7 @@
 package service
 
 import (
-	advertisement "github.com/tumbleweedd/avito-test-task"
+	advertisement "github.com/tumbleweedd/avito-test-task/model"
 	"github.com/tumbleweedd/avito-test-task/pkg/repository"
 )
 

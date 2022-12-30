@@ -1,12 +1,24 @@
-package advertisement
+package model
 
-import "errors"
+import (
+	"errors"
+
+	validation "github.com/go-ozzo/ozzo-validation"
+)
 
 type Advertisement struct {
 	Id          int    `json:"id" db:"id"`
 	Title       string `json:"title" db:"title"`
 	Description string `json:"description" db:"description"`
 	Img         string `json:"img"`
+}
+
+func (adv *Advertisement) Validate() error {
+	return validation.ValidateStruct(
+		adv,
+		validation.Field(&adv.Description, validation.Length(0, 1000).Error("the description length must be no more than")),
+		validation.Field(&adv.Title, validation.Length(0, 200).Error("the title length must be no more than 10")),
+	)
 }
 
 type AdvertisementDTO struct {

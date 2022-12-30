@@ -1,9 +1,8 @@
 package handler
 
 import (
-	"fmt"
 	"github.com/labstack/echo/v4"
-	advertisement "github.com/tumbleweedd/avito-test-task"
+	advertisement "github.com/tumbleweedd/avito-test-task/model"
 	"net/http"
 	"strconv"
 )
@@ -15,7 +14,10 @@ func (h *Handler) createAdvertisement(c echo.Context) error {
 
 	}
 
-	fmt.Println(input.Img)
+	err := input.Validate()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
 
 	id, err := h.service.Advertisement.CreateAdvertisement(input)
 	if err != nil {
@@ -97,4 +99,3 @@ func (h *Handler) deleteAdvertisement(c echo.Context) error {
 	})
 	return nil
 }
-

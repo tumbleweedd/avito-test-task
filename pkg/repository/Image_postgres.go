@@ -2,9 +2,9 @@ package repository
 
 import (
 	"fmt"
+	advertisement "github.com/tumbleweedd/avito-test-task/model"
 
 	"github.com/jmoiron/sqlx"
-	advertisement "github.com/tumbleweedd/avito-test-task"
 )
 
 type ImagePostgres struct {
