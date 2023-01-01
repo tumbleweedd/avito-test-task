@@ -7,7 +7,7 @@ import (
 
 type Advertisement interface {
 	CreateAdvertisement(input model.Advertisement) (int, error)
-	GetAllAdvertisement(sortParam string) ([]model.Advertisement, error)
+	GetAllAdvertisement(sortParam string, limitParam, offsetParam int) ([]model.Advertisement, error)
 	GetAdvertisementById(id int) (model.AdvertisementDTO, error)
 	UpdateAdvertisement(id int, dto model.UpdateAdvertisement) error
 	DeleteAdvertisement(id int) error

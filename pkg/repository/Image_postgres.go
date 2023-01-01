@@ -55,7 +55,6 @@ func (r *ImagePostgres) GetAllImagesByAdvId(advId int) ([]string, error) {
 	if err := r.db.Select(&result, query, advId); err != nil {
 		return nil, err
 	}
-
 	return result, nil
 
 }

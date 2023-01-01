@@ -5,6 +5,14 @@ import (
 	"github.com/tumbleweedd/avito-test-task/pkg/service"
 )
 
+const (
+	ascendingDateSort   = "date-asc"
+	descendingDateSort  = "date-desc"
+	ascendingPriceSort  = "price-asc"
+	descendingPriceSort = "price-desc"
+	getAllImages        = "all"
+)
+
 type Handler struct {
 	service *service.Service
 }

@@ -23,8 +23,8 @@ func (s *AdvertisementService) CreateAdvertisement(input model.Advertisement) (i
 	return s.repo.CreateAdvertisement(input)
 }
 
-func (s *AdvertisementService) GetAllAdvertisement(sortParam string) ([]model.Advertisement, error) {
-	return s.repo.GetAllAdvertisement(sortParam)
+func (s *AdvertisementService) GetAllAdvertisement(sortParam string, limitParam, offsetParam int) ([]model.Advertisement, error) {
+	return s.repo.GetAllAdvertisement(sortParam, limitParam, offsetParam)
 }
 
 func (s *AdvertisementService) GetAdvertisementById(id int) (model.AdvertisementDTO, error) {

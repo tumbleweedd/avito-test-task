@@ -56,10 +56,10 @@ func (r *AdvertisementPostgres) CreateAdvertisement(input model.Advertisement) (
 	}
 
 	var advertisementId int
-	createAdvertisementQuery := fmt.Sprint(`insert into advertisement (title, description, date_creation) 
-											values($1, $2, current_timestamp) returning id`)
+	createAdvertisementQuery := fmt.Sprint(`insert into advertisement (title, description, date_creation, price) 
+											values($1, $2, current_timestamp, $3) returning id`)
 
-	rowA := tx.QueryRow(createAdvertisementQuery, input.Title, input.Description)
+	rowA := tx.QueryRow(createAdvertisementQuery, input.Title, input.Description, input.Price)
 	err = rowA.Scan(&advertisementId)
 	if err != nil {
 		tx.Rollback()
@@ -86,13 +86,15 @@ func (r *AdvertisementPostgres) CreateAdvertisement(input model.Advertisement) (
 	return advertisementId, tx.Commit()
 }
 
-func (r *AdvertisementPostgres) GetAllAdvertisement(sortParam string) ([]model.Advertisement, error) {
+func (r *AdvertisementPostgres) GetAllAdvertisement(sortParam string, limitParam, offsetParam int) ([]model.Advertisement, error) {
 	var advertisements []model.Advertisement
 
 	query := fmt.Sprintf(`
 						select * from %s as v
-						order by v.date_creation %s;
-						`, getAllAdvertisementView, sortParam)
+						order by %s
+						limit %d
+						offset %d;
+						`, getAllAdvertisementView, sortParam, limitParam, offsetParam)
 	if err := r.db.Select(&advertisements, query); err != nil {
 		return nil, err
 	}
@@ -106,7 +108,9 @@ func (r *AdvertisementPostgres) GetAdvertisementById(id int) (model.Advertisemen
 	query := fmt.Sprint(`
 								SELECT a.description,
 									   a.title,
-									   i.img
+									   i.img,
+									   a.date_creation,
+									   a.price
 									FROM advertisement a
 									join advertisement_img ai on a.id = ai.advertisement_id
 									join img i on i.id = ai.img_id

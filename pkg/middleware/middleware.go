@@ -4,15 +4,18 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+var SortBy *string
+
 const (
-	ascendingDateSort = "desc"
-	descendingDateSort = ""
+	limitConst         = "5"
+	defaultOffsetParam = "0"
 )
 
-func SortAdvByDate(next echo.HandlerFunc) echo.HandlerFunc {
+func PaginationAdvertisement(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		
-		
+		c.Request().Header.Set("limit", limitConst)
+		c.Request().Header.Set("offset", defaultOffsetParam)
+
 		err := next(c)
 		if err != nil {
 			return err
@@ -20,4 +23,3 @@ func SortAdvByDate(next echo.HandlerFunc) echo.HandlerFunc {
 		return nil
 	}
 }
-
