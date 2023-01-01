@@ -23,3 +23,16 @@ Cервис для хранения и подачи объявлений. Объ
 | GET           |/api/advertisement/:id/image/          |Получить все изображения для объявления |
 | GET           |/api/advertisement/:advId/image/:imgId |Получить изображение                    |
 | DELETE        |/api/advertisement/:advId/image/:imgId |Удалить изображение                     |
+
+# Используемые технологии:
+### Библиотеки и фреймворки:
+- Echo framework
+- Ozzo-validation 
+- Viper
+- Logrus
+
+### База данных:
+- PostgreSQL
+
+### Тестирование эндпоинтов:
+- Postman
